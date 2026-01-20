@@ -4,13 +4,16 @@ export const tasksFilter = (
 Return ONLY a JSON object that validates against this schema:
 {
   search?: string,
-  patientId?: string (uuid),
-  assignedToId?: string (uuid),
-  status?: "pending" | "in_progress" | "completed",
+  status?: "cancelled" | "pending" | "in_progress" | "completed",
   priority?: "low" | "medium" | "high",
-  category?: "medication" | "therapy" | "consultation",
-  dueDateFrom?: string (ISO date),
-  dueDateTo?: string (ISO date),
+  category?: "medication" | "therapy" | "consultation" | "examination" | "surgery" | "other",
+  "assignedTo.name"?: string,
+  "assignedTo.role"?: "doctor" | "nurse" | "therapist",
+  "patient.firstName"?: string,
+  "patient.lastName"?: string,
+  "patient.roomNumber"?: string,
+  "dueDate.from"?: string (ISO date),
+  "dueDate.to"?: string (ISO date),
   limit?: number (integer >= 0),
   offset?: number (integer >= 0)
 }
