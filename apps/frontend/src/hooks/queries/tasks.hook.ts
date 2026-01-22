@@ -5,7 +5,6 @@ export const tasksOptions = (queryParams: GetTasksQueryParams) =>
   queryOptions({
     queryKey: ["tasks", queryParams],
     queryFn: () => getTasks(queryParams),
-    initialData: { data: [], total: 0 },
   });
 
 export const useTasks = (queryParams: GetTasksQueryParams) => {

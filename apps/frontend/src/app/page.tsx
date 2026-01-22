@@ -6,7 +6,12 @@ import { getQueryClient } from "@/libs/tanstackQuery";
 export default function Home() {
   const queryClient = getQueryClient();
 
-  void queryClient.prefetchQuery(tasksOptions({}));
+  void queryClient.prefetchQuery(
+    tasksOptions({
+      limit: "10",
+      offset: "0",
+    }),
+  );
 
   return (
     <main>

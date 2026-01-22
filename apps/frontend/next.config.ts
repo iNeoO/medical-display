@@ -4,10 +4,11 @@ const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
   rewrites: async () => {
+    const backendUri = process.env.BACKEND_URI ?? "http://localhost:4000";
     return [
       {
         source: "/api/:path*",
-        destination: `${process.env.BACKEND_URI || "http://localhost:4000/api/"}:path*`,
+        destination: `${backendUri}/api/:path*`,
       },
     ];
   },
