@@ -3,6 +3,7 @@ import tasksController from "./features/tasks/tasks.controller.js";
 import iaController from "./features/ia/ia.controller.js";
 
 const app = new Hono()
+  .basePath("/api")
   .route("/tasks", tasksController)
   .route("/ia", iaController);
 

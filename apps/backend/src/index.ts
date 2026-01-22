@@ -1,13 +1,15 @@
 import { serve } from "@hono/node-server";
 import app from "./app.js";
 import { init as initDb } from "./db/index.js";
+import { setupOpenAPI } from "./utils/openAPI.js";
 
 initDb();
+await setupOpenAPI(app);
 
 const server = serve(
   {
     fetch: app.fetch,
-    port: 3000,
+    port: 4000,
   },
   (info) => {
     console.log(`Server is running on http://localhost:${info.port}`);

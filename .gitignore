@@ -29,3 +29,8 @@ lerna-debug.log*
 
 # build
 dist/
+
+# db
+medica.db
+medica.db-shm
+medica.db-wal

@@ -1,8 +1,11 @@
 import fs from "node:fs";
+import path from "node:path";
 import Database from "better-sqlite3";
 import { TaskSchema } from "../features/tasks/tasks.schema.js";
 
-export const db: Database.Database = new Database("medica.db");
+const dbPath = path.resolve(process.cwd(), "medica.db");
+const isNewDb = !fs.existsSync(dbPath);
+export const db: Database.Database = new Database(dbPath);
 db.pragma("journal_mode = WAL");
 
 const init = () => {
@@ -28,6 +31,7 @@ const init = () => {
 			notes TEXT
 		)
 	`);
+  db.exec("DELETE FROM task");
 
   const insert = db.prepare(
     `INSERT OR IGNORE INTO task (
@@ -52,11 +56,13 @@ const init = () => {
 		) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
   );
   const exists = db.prepare("SELECT 1 FROM task WHERE id = ? LIMIT 1");
+
   const insertMany = db.transaction((tasks: unknown[]) => {
     for (const item of tasks) {
       const parsed = TaskSchema.safeParse(item);
       if (!parsed.success) {
-        console.warn("Invalid task skipped.", parsed.error.flatten());
+        console.log(item);
+        console.warn("Invalid task skipped.", parsed.error);
         continue;
       }
       const task = parsed.data;
@@ -86,29 +92,26 @@ const init = () => {
     }
   });
 
-  const stream = fs.createReadStream("./Medical Tasks.json", {
-    encoding: "utf8",
-  });
-  let data = "";
+  const countRow = db.prepare("SELECT COUNT(*) as count FROM task").get() as {
+    count: number;
+  };
+  const shouldSeed = isNewDb || countRow.count === 0;
+  if (!shouldSeed) {
+    return;
+  }
 
-  stream.on("data", (chunk) => {
-    data += chunk;
-  });
-  stream.on("end", () => {
-    try {
-      const tasks = JSON.parse(data);
-      if (!Array.isArray(tasks)) {
-        throw new Error("Expected an array of tasks.");
-      }
-      insertMany(tasks);
-      console.log("Import succeeded.");
-    } catch (err) {
-      console.error("Import failed.", err);
+  const seedPath = new URL("./Medical-Tasks.json", import.meta.url);
+  try {
+    const data = fs.readFileSync(seedPath, "utf8");
+    const tasks = JSON.parse(data);
+    if (!Array.isArray(tasks)) {
+      throw new Error("Expected an array of tasks.");
     }
-  });
-  stream.on("error", (err) => {
-    console.error("Read failed.", err);
-  });
+    insertMany(tasks);
+    console.log("Import succeeded.");
+  } catch (err) {
+    console.error("Import failed.", err);
+  }
 };
 
 export { init };

@@ -4,18 +4,22 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev:backend": "pnpm --filter @medical-display/backend dev",
-    "dev:frontend": "pnpm --filter frontend dev",
-    "build:backend": "pnpm --filter @medical-display/backend build",
+    "dev": "pnpm run dev:backend & pnpm run dev:frontend",
+    "dev:backend": "dotenv -e .env -- pnpm --filter @medical-display/backend dev",
+    "dev:frontend": "dotenv -e .env -- pnpm --filter @medical-display/frontend dev",
+    "build:backend": "dotenv -e .env -- pnpm --filter @medical-display/backend build",
     "build:common": "pnpm --filter @medical-display/common build",
-    "build:frontend": "pnpm --filter @medical-display/frontend build",
+    "build:frontend": "dotenv -e .env -- pnpm --filter @medical-display/frontend build",
     "build": "pnpm run build:common && pnpm run build:backend && pnpm run build:frontend",
-    "start:backend": "pnpm --filter @medical-display/backend start",
-    "start:frontend": "pnpm --filter @medical-display/frontend start",
-    "start": "concurrently \"pnpm run start:backend\" \"pnpm run start:frontend\"",
+    "start:backend": "dotenv -e .env -- pnpm --filter @medical-display/backend start",
+    "start:frontend": "dotenv -e .env -- pnpm --filter @medical-display/frontend start",
+    "start": "pnpm run start:backend & pnpm run start:frontend",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "dotenv-cli": "^11.0.0"
+  }
 }
